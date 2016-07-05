@@ -78,6 +78,27 @@ class Simulation:
         
         pygame.display.flip()
 
+    def export_state(self):
+
+        agent_list = []
+        fixed_obstacle_list = []
+        moving_obstacle_list = []
+
+        for agent in self.agent_blocks:
+            agent_list.append((agent.column, agent.row))
+
+        for column in range(self.WIDTH):
+            for row in range(self.HEIGTH):
+                if type(self.grid[column][row]) is obstacle_block:
+                    fixed_obstacle_list.append((column,row))
+        
+        for obstacle in self.moving_obstacles:
+            moving_obstacle_list.append((obstacle.column, obstacle.row))
+        
+        dict_blocks = {"agents": agent_list, "fixed_obstacles": fixed_obstacle_list, "moving_obstacles": moving_obstacle_list}
+
+        return dict_blocks
+
 
 def main():
 
@@ -107,43 +128,14 @@ def main():
         clock.tick(1)
 
     pygame.quit()
+    blocks = sim.export_state()
 
-
-def read_config(fileName):
-
-
-    configFile = open(fileName, 'r')
-    for line in configFile:
-        line = line.split(" ")
-        if line[0] == "HEIGTH:":
-            global HEIGTH
-            HEIGTH = int(line[1])
-        elif line[0] == "WIDTH:":
-            global WIDTH
-            WIDTH = int(line[1])
-            for column in range(WIDTH):
-                grid.append([])
-                for row in range(HEIGTH):
-                    grid[column].append(empty_block())
-
-        elif line[0] == "MARGIN:":
-            global MARGIN
-            MARGIN = int(line[1])
-        elif line[0] == "WINDOW_SIZE:":
-            global WINDOW_SIZE
-            WINDOW_SIZE[0] = int(line[1])
-            WINDOW_SIZE[1] = int(line[2])
-        elif line[0] == "BLOCK:":
-            if line[1] == "agent":
-                agent_blocks.append(agent_block(int(line[2]),int(line[3])))
-            elif line[1] == "fixed_obstacle":
-                grid[int(line[2])][int(line[3])] = obstacle_block()
-            elif line[1] == "moving_obstacle":
-                grid[int(line[2])][int(line[3])] = obstacle_block()
-            elif line[1] == "goal":
-                grid[int(line[2])][int(line[3])] = goal_block()
-            else:
-                grid[int(line[2])][int(line[3])] = empty_block()
+    for agent in blocks["agents"]:
+        print agent
+    for agent in blocks["moving_obstacles"]:
+        print agent
+    for agent in blocks["fixed_obstacles"]:
+        print agent
 
 
 
