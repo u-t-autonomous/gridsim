@@ -18,7 +18,7 @@ class Simulation:
         for line in configFile:
             line = line.split(" ")
             if line[0] == "HEIGTH:":
-                self. HEIGTH = int(line[1])
+                self.HEIGTH = int(line[1])
             elif line[0] == "WIDTH:":
                 self.WIDTH = int(line[1])
                 for column in range(self.WIDTH):
@@ -29,8 +29,8 @@ class Simulation:
             elif line[0] == "MARGIN:":
                 self.MARGIN = int(line[1])
             elif line[0] == "WINDOW_SIZE:":
-                self.WINDOW_SIZE[0] = int(line[1])
-                self.WINDOW_SIZE[1] = int(line[2])
+                self.WINDOW_SIZE[0] = int(15.1*self.WIDTH)
+                self.WINDOW_SIZE[1] = int(15.1*self.HEIGTH)
             elif line[0] == "BLOCK:":
                 if line[1] == "agent":
                     self.agent_blocks.append(agent_block(int(line[2]),int(line[3])))
