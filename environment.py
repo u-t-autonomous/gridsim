@@ -41,26 +41,27 @@ class Simulation:
                 else:
                     self.grid[int(line[2])][int(line[3])] = empty_block()
     
-        self.WINDOW_SIZE[0] = int(15.1*self.WIDTH)
-        self.WINDOW_SIZE[1] = int(15.1*self.HEIGHT)
+        self.WINDOW_SIZE[0] = int(30.1*self.WIDTH)
+        self.WINDOW_SIZE[1] = int(30.1*self.HEIGHT)
         self.screen = pygame.display.set_mode(self.WINDOW_SIZE)
 
         pygame.init()
-
 
     def clear(self):
         self.screen.fill([0,0,0])
 
     def move_agent(self, number, action):
-        if action == "north":
+        blocks = self.export_state()
+        y_pos = blocks["agents"][number][0]
+        x_pos = blocks["agents"][number][1]
+        if action == "north" and y_pos != 0:
             self.agent_blocks[number].move_north()
-        elif action == "south":
+        elif action == "south" and y_pos != self.HEIGHT - 1:
             self.agent_blocks[number].move_south()
-        elif action == "west":
+        elif action == "west" and x_pos != 0:
             self.agent_blocks[number].move_west()
-        elif action == "east":
-            self.agent_blocks[number].move_east()
-        
+        elif action == "east" and y_pos != self.WIDTH - 1:
+            self.agent_blocks[number].move_east() 
 
     def draw(self):
 
@@ -111,17 +112,20 @@ def main():
             if event.type == pygame.QUIT:
                 done = True
 
-        #Clear screen        
-        sim.clear()
+        #Clear screen (no need for clear)        
+        #sim.clear()
 
         #Move agents
         sim.move_agent(0, "east")
 
         #Update obstacles
         #sim.update()
+        #Replace sim.update() to sim.move_obstacle(obstacle id, action)
 
         #Draw screen
         sim.draw()
+        blocks = sim.export_state()
+        print blocks["agents"][0][0]
 
 
         clock.tick(1)
@@ -136,6 +140,8 @@ def main():
     for agent in blocks["fixed_obstacles"]:
         print agent
 
+    #Export log to text file
+    #sim.log()
 
 
 class block():
@@ -148,6 +154,7 @@ class block():
 
 class obstacle_block(block):
     color = (255,0,0) #red
+
 
 class moving_obstacle_block(obstacle_block):
     colomn = 0
@@ -166,8 +173,10 @@ class moving_obstacle_block(obstacle_block):
     def move_west(self):
         self.column += -1
 
+
 class goal_block(block):
     color = (255,255,0) #yellow
+
 
 class agent_block(block):
     color = (0,128,0) #green
@@ -186,6 +195,7 @@ class agent_block(block):
         self.column += 1
     def move_west(self):
         self.column += -1
+
 
 class empty_block(block):
     color = (255,255,255)
