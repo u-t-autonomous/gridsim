@@ -8,29 +8,27 @@ class Simulation:
     agent_blocks = []
     moving_obstacles = []
     WINDOW_SIZE = [0, 0]
-    HEIGTH = 0
+    HEIGHT = 0
     WIDTH = 0
     screen = pygame.display.set_mode((0,0))
     pygame.display.set_caption("Environment")
     
     def __init__(self, configFile, matrixFile):
         configFile = open(configFile, 'r')
+
         for line in configFile:
             line = line.split(" ")
-            if line[0] == "HEIGTH:":
-                self.HEIGTH = int(line[1])
+            if line[0] == "HEIGHT:":
+                self.HEIGHT = int(line[1])
             elif line[0] == "WIDTH:":
                 self.WIDTH = int(line[1])
                 for column in range(self.WIDTH):
                     self.grid.append([])
-                    for row in range(self.HEIGTH):
+                    for row in range(self.HEIGHT):
                         self.grid[column].append(empty_block())
 
             elif line[0] == "MARGIN:":
                 self.MARGIN = int(line[1])
-            elif line[0] == "WINDOW_SIZE:":
-                self.WINDOW_SIZE[0] = int(15.1*self.WIDTH)
-                self.WINDOW_SIZE[1] = int(15.1*self.HEIGTH)
             elif line[0] == "BLOCK:":
                 if line[1] == "agent":
                     self.agent_blocks.append(agent_block(int(line[2]),int(line[3])))
@@ -43,7 +41,8 @@ class Simulation:
                 else:
                     self.grid[int(line[2])][int(line[3])] = empty_block()
     
-
+        self.WINDOW_SIZE[0] = int(15.1*self.WIDTH)
+        self.WINDOW_SIZE[1] = int(15.1*self.HEIGHT)
         self.screen = pygame.display.set_mode(self.WINDOW_SIZE)
 
         pygame.init()
@@ -66,7 +65,7 @@ class Simulation:
     def draw(self):
 
         for column in range(self.WIDTH):
-            for row in range(self.HEIGTH):
+            for row in range(self.HEIGHT):
                 self.grid[column][row].draw(self.screen, column, row, self.MARGIN)
 
 
@@ -88,7 +87,7 @@ class Simulation:
             agent_list.append((agent.column, agent.row))
 
         for column in range(self.WIDTH):
-            for row in range(self.HEIGTH):
+            for row in range(self.HEIGHT):
                 if type(self.grid[column][row]) is obstacle_block:
                     fixed_obstacle_list.append((column,row))
         
