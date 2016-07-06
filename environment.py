@@ -1,4 +1,6 @@
 import pygame
+import random
+import bisect
 
 
 class Simulation:
@@ -7,9 +9,13 @@ class Simulation:
     grid = []
     agent_blocks = []
     moving_obstacles = []
+    obstacle_percentages = {}
+    log = {"agents": [], "moving_obstacles": []} 
     WINDOW_SIZE = [0, 0]
     HEIGHT = 0
     WIDTH = 0
+    MARGIN = 2
+    time_step = 0
     screen = pygame.display.set_mode((0,0))
     pygame.display.set_caption("Environment")
     
@@ -27,8 +33,8 @@ class Simulation:
                     for row in range(self.HEIGHT):
                         self.grid[column].append(empty_block())
 
-            elif line[0] == "MARGIN:":
-                self.MARGIN = int(line[1])
+            #elif line[0] == "MARGIN:":
+            #    self.MARGIN = int(line[1])
             elif line[0] == "BLOCK:":
                 if line[1] == "agent":
                     self.agent_blocks.append(agent_block(int(line[2]),int(line[3])))
@@ -41,9 +47,16 @@ class Simulation:
                 else:
                     self.grid[int(line[2])][int(line[3])] = empty_block()
     
-        self.WINDOW_SIZE[0] = int(30.1*self.WIDTH)
-        self.WINDOW_SIZE[1] = int(30.1*self.HEIGHT)
+        self.WINDOW_SIZE[0] = int(30*self.WIDTH+2)
+        self.WINDOW_SIZE[1] = int(30*self.HEIGHT+2)
         self.screen = pygame.display.set_mode(self.WINDOW_SIZE)
+
+        for i in self.agent_blocks:
+            self.log["agents"].append([])
+        for i in self.moving_obstacles:
+            self.log["moving_obstacles"].append([])
+
+        self.import_matrix(matrixFile)
 
         pygame.init()
 
@@ -51,16 +64,16 @@ class Simulation:
         self.screen.fill([0,0,0])
 
     def move_agent(self, number, action):
-        blocks = self.export_state()
-        y_pos = blocks["agents"][number][0]
-        x_pos = blocks["agents"][number][1]
-        if action == "north" and y_pos != 0:
+        x_pos = self.agent_blocks[number].column
+        y_pos = self.agent_blocks[number].row
+        self.log["agents"][number].append((self.time_step, (x_pos, y_pos), action))
+        if action == "north" and y_pos > 0:
             self.agent_blocks[number].move_north()
-        elif action == "south" and y_pos != self.HEIGHT - 1:
+        elif action == "south" and y_pos < self.HEIGHT - 1:
             self.agent_blocks[number].move_south()
-        elif action == "west" and x_pos != 0:
+        elif action == "west" and x_pos > 0:
             self.agent_blocks[number].move_west()
-        elif action == "east" and y_pos != self.WIDTH - 1:
+        elif action == "east" and x_pos < self.WIDTH - 1:
             self.agent_blocks[number].move_east() 
 
     def draw(self):
@@ -99,6 +112,80 @@ class Simulation:
 
         return dict_blocks
 
+    #action = weighted_choice([(1,0), (0,100)])
+
+    def weighted_choice(self, choices):
+        values, weights = zip(*choices)
+        total = 0
+        cum_weights = []
+        for w in weights:
+            total += w
+            cum_weights.append(total)
+        x = random.random() * total
+        i = bisect.bisect(cum_weights, x)
+        return values[i]
+        
+        
+    def move_obstacle(self, number, action):
+        x_pos = self.moving_obstacles[number].column
+        y_pos = self.moving_obstacles[number].row
+        self.log["moving_obstacles"][number].append((self.time_step, (x_pos, y_pos), action))
+        if action == "north" and y_pos > 0:
+            self.moving_obstacles[number].move_north()
+        elif action == "south" and y_pos < self.HEIGHT - 1:
+            self.moving_obstacles[number].move_south()
+        elif action == "west" and x_pos > 0:
+            self.moving_obstacles[number].move_west()
+        elif action == "east" and x_pos < self.WIDTH - 1:
+            self.moving_obstacles[number].move_east()
+
+    def import_matrix(self, matrixFile):
+        matrixFile = file(matrixFile, 'r')
+        for line in matrixFile:
+            line = line.split(" ")
+            self.obstacle_percentages[(int(line[0]), int(line[1]))] = (int(line[2]), int(line[3]), int(line[4]), int(line[5]), int(line[6]))
+
+
+    def move_obstacles(self):
+        index = 0
+        for obstacle in self.moving_obstacles:
+            obstacle_percentages = self.obstacle_percentages[(obstacle.column, obstacle.row)]
+            action = self.weighted_choice((("north", obstacle_percentages[0]), ("east", obstacle_percentages[1]), ("south", obstacle_percentages[2]), ("west", obstacle_percentages[3]), ("stay", obstacle_percentages[4])))
+            self.move_obstacle(index, action)
+            index += 1
+
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return True
+
+        for agent in self.agent_blocks:
+            for obstacle in self.moving_obstacles:
+                if agent.column == obstacle.column and agent.row == obstacle.row:
+                    print "Moving obstacle hit"
+                    return True
+            if type(self.grid[agent.column][agent.row]) is obstacle_block:
+                print "Fixed obstacle hit"
+                return True
+            if type(self.grid[agent.column][agent.row]) is goal_block:
+                print "Goal block hit"
+                return True
+
+        self.time_step += 1
+        return False
+                         
+    def get_log(self):
+        return self.log
+
+
+    def update(self):
+        self.move_obstacles()
+        self.draw()
+        return self.handle_events()
+        
+
+    
+
 
 def main():
 
@@ -107,41 +194,36 @@ def main():
 
     done = False
     while not done:
-        #Handle pygame events
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                done = True
-
-        #Clear screen (no need for clear)        
-        #sim.clear()
+        #Handle events
+        #done = sim.handle_events()
 
         #Move agents
         sim.move_agent(0, "east")
+        sim.move_agent(1, "south")
 
-        #Update obstacles
-        #sim.update()
-        #Replace sim.update() to sim.move_obstacle(obstacle id, action)
+        #Update obstacle positions
+        #sim.move_obstacles()
 
         #Draw screen
-        sim.draw()
-        blocks = sim.export_state()
-        print blocks["agents"][0][0]
+        #sim.draw()
+        #blocks = sim.export_state()
+        #print blocks["agents"][0][0]
+        done = sim.update()
 
-
-        clock.tick(1)
+        clock.tick(10)
 
     pygame.quit()
-    blocks = sim.export_state()
 
-    for agent in blocks["agents"]:
-        print agent
-    for agent in blocks["moving_obstacles"]:
-        print agent
-    for agent in blocks["fixed_obstacles"]:
-        print agent
+    for line in sim.get_log()["moving_obstacles"][0]:
+        print line
+        
+    
+    #for line in sim.get_log()["moving_obstacles"]:
+    #    print line
 
     #Export log to text file
     #sim.log()
+
 
 
 class block():
