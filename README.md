@@ -8,7 +8,7 @@ Install pygame
 
 # Documentation
 
-## Instantiating:
+## Instantiating
 
 Simulation(configFile = None, matrixFile = None)
 
@@ -32,7 +32,7 @@ Usage:
 
 sim.move_agent(0,'east')
 
-## Getting Current State:
+## Getting Current State
 
 Simulation.get_state()
 
@@ -70,9 +70,9 @@ Returns:
 
 Usage:
 
-# Usage Example:
+# Usage Example
 
-'''
+```
 	sim = Simulation("config.txt", "matrix.txt")
 
 	done = False
@@ -91,4 +91,4 @@ Usage:
 
 	for line in sim.get_log()["agents"][0]:
 	    print line
-'''
+```
