@@ -186,24 +186,6 @@ class Simulation:
         return self.handle_events()
 
 
-def main():
-
-    sim = Simulation("config.txt", "matrix.txt")
-
-    done = False
-    while not done:
-
-        sim.move_agent(0, "east")
-        sim.move_agent(1, "south")
-
-        done = sim.update()
-
-    pygame.quit()
-
-    for line in sim.get_log()["moving_obstacles"][0]:
-        print line
-        
-    
 class Block():
     color = (0,0,0)
     block_size = 30
