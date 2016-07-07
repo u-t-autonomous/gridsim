@@ -17,7 +17,6 @@ class Simulation:
     MARGIN = 2
     time_step = 0
     screen = pygame.display.set_mode((0,0))
-    clock = pygame.time.Clock()
     pygame.display.set_caption("Environment")
     
     def __init__(self, configFile, matrixFile):
@@ -32,21 +31,21 @@ class Simulation:
                 for column in range(self.WIDTH):
                     self.grid.append([])
                     for row in range(self.HEIGHT):
-                        self.grid[column].append(Empty_block())
+                        self.grid[column].append(empty_block())
 
             #elif line[0] == "MARGIN:":
             #    self.MARGIN = int(line[1])
             elif line[0] == "BLOCK:":
                 if line[1] == "agent":
-                    self.agent_blocks.append(Agent_block(int(line[2]),int(line[3])))
+                    self.agent_blocks.append(agent_block(int(line[2]),int(line[3])))
                 elif line[1] == "fixed_obstacle":
-                    self.grid[int(line[2])][int(line[3])] = Obstacle_block()
+                    self.grid[int(line[2])][int(line[3])] = obstacle_block()
                 elif line[1] == "moving_obstacle":
-                    self.moving_obstacles.append(Moving_obstacle_block(int(line[2]), int(line[3])))
+                    self.moving_obstacles.append(moving_obstacle_block(int(line[2]), int(line[3])))
                 elif line[1] == "goal":
-                    self.grid[int(line[2])][int(line[3])] = Goal_block()
+                    self.grid[int(line[2])][int(line[3])] = goal_block()
                 else:
-                    self.grid[int(line[2])][int(line[3])] = Empty_block()
+                    self.grid[int(line[2])][int(line[3])] = empty_block()
     
         self.WINDOW_SIZE[0] = int(30*self.WIDTH+2)
         self.WINDOW_SIZE[1] = int(30*self.HEIGHT+2)
@@ -92,7 +91,7 @@ class Simulation:
         
         pygame.display.flip()
 
-    def get_state(self):
+    def export_state(self):
 
         agent_list = []
         fixed_obstacle_list = []
@@ -103,7 +102,7 @@ class Simulation:
 
         for column in range(self.WIDTH):
             for row in range(self.HEIGHT):
-                if type(self.grid[column][row]) is Obstacle_block:
+                if type(self.grid[column][row]) is obstacle_block:
                     fixed_obstacle_list.append((column,row))
         
         for obstacle in self.moving_obstacles:
@@ -165,13 +164,14 @@ class Simulation:
                 if agent.column == obstacle.column and agent.row == obstacle.row:
                     print "Moving obstacle hit"
                     return True
-            if type(self.grid[agent.column][agent.row]) is Obstacle_block:
+            if type(self.grid[agent.column][agent.row]) is obstacle_block:
                 print "Fixed obstacle hit"
                 return True
-            if type(self.grid[agent.column][agent.row]) is Goal_block:
+            if type(self.grid[agent.column][agent.row]) is goal_block:
                 print "Goal block hit"
                 return True
 
+        self.time_step += 1
         return False
                          
     def get_log(self):
@@ -181,22 +181,36 @@ class Simulation:
     def update(self):
         self.move_obstacles()
         self.draw()
-        self.time_step += 1
-        self.clock.tick(2)
         return self.handle_events()
+        
+
+    
 
 
 def main():
 
     sim = Simulation("config.txt", "matrix.txt")
+    clock = pygame.time.Clock()
 
     done = False
     while not done:
+        #Handle events
+        #done = sim.handle_events()
 
+        #Move agents
         sim.move_agent(0, "east")
         sim.move_agent(1, "south")
 
+        #Update obstacle positions
+        #sim.move_obstacles()
+
+        #Draw screen
+        #sim.draw()
+        #blocks = sim.export_state()
+        #print blocks["agents"][0][0]
         done = sim.update()
+
+        clock.tick(2)
 
     pygame.quit()
 
@@ -204,7 +218,15 @@ def main():
         print line
         
     
-class Block():
+    #for line in sim.get_log()["moving_obstacles"]:
+    #    print line
+
+    #Export log to text file
+    #sim.log()
+
+
+
+class block():
     color = (0,0,0)
     block_size = 30
 
@@ -212,11 +234,11 @@ class Block():
         pygame.draw.rect(surface, self.color, [self.block_size * column + MARGIN, self.block_size * row +  MARGIN, self.block_size-MARGIN, self.block_size-MARGIN])
 
 
-class Obstacle_block(Block):
+class obstacle_block(block):
     color = (255,0,0) #red
 
 
-class Moving_obstacle_block(Obstacle_block):
+class moving_obstacle_block(obstacle_block):
     colomn = 0
     row = 0
 
@@ -234,11 +256,11 @@ class Moving_obstacle_block(Obstacle_block):
         self.column += -1
 
 
-class Goal_block(Block):
+class goal_block(block):
     color = (255,255,0) #yellow
 
 
-class Agent_block(Block):
+class agent_block(block):
     color = (0,128,0) #green
     colomn = 0
     row = 0
@@ -257,7 +279,7 @@ class Agent_block(Block):
         self.column += -1
 
 
-class Empty_block(Block):
+class empty_block(block):
     color = (255,255,255)
 
 
