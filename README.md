@@ -1,5 +1,8 @@
 # gridsim
+
 2D gridworld simulation
+
+Keywords: grid world, grid-world, pygame, sim, girdworld, simulation, 2D.
 
 # Dependencies
 
@@ -27,7 +30,9 @@ Parameters:
 
 Returns:
 
-Usage
+Usage:
+
+sim.move_agent(0,'east')
 
 ## Getting Current State:
 
@@ -35,17 +40,21 @@ Simulation.get_state()
 
 Parameters:
 
+None
+
 Returns:
 
 Usage:
 
-sim.get_state()
+state = sim.get_state()
 
 ## Update simulation
 
 Simulation.update()
 
-Parameters
+Parameters:
+
+None
 
 Returns:
 
@@ -64,6 +73,3 @@ Returns:
 Usage:
 
 # Usage Example:
-
-
-
