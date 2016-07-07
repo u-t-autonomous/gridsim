@@ -1,6 +1,3 @@
-import pygame
-from random import random
-from bisect import bisect
 from environment import Simulation
 
 

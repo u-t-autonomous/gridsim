@@ -242,6 +242,3 @@ class Agent_block(Block):
 class Empty_block(Block):
     color = (255,255,255)
 
-
-if __name__ == '__main__':
-    main()
