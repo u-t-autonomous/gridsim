@@ -1,6 +1,6 @@
 # gridsim
 
-2D gridworld simulation. Keywords: grid world, grid-world, pygame, sim, girdworld, simulation, 2D.
+2D gridworld simulation, grid world, grid-world, pygame, sim, girdworld, simulation, 2D.
 
 # Dependencies
 
