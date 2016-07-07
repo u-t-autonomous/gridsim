@@ -20,7 +20,7 @@ Usage:
 
 sim = Simulation('path/to/config_file','path/to/MDP_file')
 
-## Moving Agents:
+## Moving Agents
 
 Simulation.move_agent(number = None, action = None)
 
@@ -60,7 +60,7 @@ Usage:
 
 done = sim.update()
 
-## Getting the log:
+## Getting the log
 
 Simulation.log()
 
@@ -73,22 +73,24 @@ Usage:
 # Usage Example
 
 ```
-	sim = Simulation("config.txt", "matrix.txt")
+from environment import Simulation
 
-	done = False
-	while not done:
+sim = Simulation("config.txt", "matrix.txt")
 
-	    sim.move_agent(0, "east")
-	    sim.move_agent(1, "south")
-	    
-	    agent1 = sim.get_state()["agents"][0]
-	    print "agent1: {}".format(agent1)
+done = False
+while not done:
 
-	    obstacle1 = sim.get_state()["moving_obstacles"][0]
-	    print "obstacle1: {}".format(obstacle1)
+    sim.move_agent(0, "east")
+    sim.move_agent(1, "south")
+    
+    agent1 = sim.get_state()["agents"][0]
+    print "agent1: {}".format(agent1)
 
-	    done = sim.update()
+    obstacle1 = sim.get_state()["moving_obstacles"][0]
+    print "obstacle1: {}".format(obstacle1)
 
-	for line in sim.get_log()["agents"][0]:
-	    print line
+    done = sim.update()
+
+for line in sim.get_log()["agents"][0]:
+    print line
 ```
