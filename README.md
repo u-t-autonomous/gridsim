@@ -121,3 +121,8 @@ while not done:
 for line in sim.get_log()["agents"][0]:
     print line
 ```
+
+# Developers
+
+* @LaufferN
+* @sahabi
