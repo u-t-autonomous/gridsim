@@ -4,9 +4,8 @@
 
 # Dependencies
 
-Python 2.7
-
-Pygame
+* Python 2.7
+* Pygame
 
 # Documentation
 
@@ -16,12 +15,16 @@ Simulation(configFile = None, matrixFile = None)
 
 ##### Parameters:
 
+configFile: String
+
+matrixFile: String
+
 ##### Returns:
 
 ##### Usage:
-
+```python
 sim = Simulation('path/to/config_file','path/to/MDP_file')
-
+```
 ## Moving Agents
 
 Simulation.move_agent(number = None, action = None)
@@ -37,9 +40,9 @@ action: String
 None
 
 ##### Usage:
-
+```python
 sim.move_agent(0,'east')
-
+```
 ## Getting Current State
 
 Simulation.get_state()
@@ -53,9 +56,9 @@ None
 Dictionary
 
 ##### Usage:
-
+```python
 state = sim.get_state()
-
+```
 ## Update simulation
 
 Simulation.update()
