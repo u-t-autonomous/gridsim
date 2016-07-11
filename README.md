@@ -21,6 +21,8 @@ matrixFile: String
 
 ##### Returns:
 
+An instance of Simulation()
+
 ##### Usage:
 ```python
 sim = Simulation('path/to/config_file','path/to/MDP_file')
