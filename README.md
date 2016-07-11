@@ -2,14 +2,14 @@
 
 2D gridworld simulation, grid world, grid-world, pygame, sim, girdworld, simulation, 2D.
 
-# Dependencies
+## Dependencies
 
 * Python 2.7
 * Pygame
 
-# Documentation
+## Documentation
 
-## Instantiating
+### Instantiating
 
 Simulation(configFile = None, matrixFile = None)
 
@@ -27,7 +27,7 @@ An instance of Simulation()
 ```python
 sim = Simulation('path/to/config_file','path/to/MDP_file')
 ```
-## Moving Agents
+### Moving Agents
 
 Simulation.move_agent(number = None, action = None)
 
@@ -45,7 +45,7 @@ None
 ```python
 sim.move_agent(0,'east')
 ```
-## Getting Current State
+### Getting Current State
 
 Simulation.get_state()
 
@@ -61,7 +61,7 @@ Dictionary
 ```python
 state = sim.get_state()
 ```
-## Update simulation
+### Update simulation
 
 Simulation.update()
 
@@ -77,7 +77,7 @@ Boolean
 ```python
 done = sim.update()
 ```
-## Getting the log
+### Getting the log
 
 Simulation.get_log()
 
@@ -97,7 +97,7 @@ agents_log = sim.get_log()["agents"]
 agent_0_log = sim.get_log()["agents"][0]
 ```
 
-# Usage Example
+## Usage Example
 
 ```python
 from environment import Simulation
@@ -122,7 +122,7 @@ for line in sim.get_log()["agents"][0]:
     print line
 ```
 
-# Developers
+## Developers
 
 * [@LaufferN](https://github.com/LaufferN)
 * [@sahabi](https://github.com/sahabi)
