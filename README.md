@@ -14,11 +14,11 @@ Pygame
 
 Simulation(configFile = None, matrixFile = None)
 
-#### Parameters:
+##### Parameters:
 
-#### Returns:
+##### Returns:
 
-#### Usage:
+##### Usage:
 
 sim = Simulation('path/to/config_file','path/to/MDP_file')
 
@@ -26,17 +26,17 @@ sim = Simulation('path/to/config_file','path/to/MDP_file')
 
 Simulation.move_agent(number = None, action = None)
 
-#### Parameters:
+##### Parameters:
 
 number: Integer
 
 action: String
 
-#### Returns:
+##### Returns:
 
 None
 
-#### Usage:
+##### Usage:
 
 sim.move_agent(0,'east')
 
@@ -44,15 +44,15 @@ sim.move_agent(0,'east')
 
 Simulation.get_state()
 
-#### Parameters:
+##### Parameters:
 
 None
 
-#### Returns:
+##### Returns:
 
 Dictionary
 
-#### Usage:
+##### Usage:
 
 state = sim.get_state()
 
@@ -60,15 +60,15 @@ state = sim.get_state()
 
 Simulation.update()
 
-#### Parameters:
+##### Parameters:
 
 None
 
-#### Returns:
+##### Returns:
 
 Boolean
 
-#### Usage:
+##### Usage:
 ```python
 done = sim.update()
 ```
@@ -76,15 +76,15 @@ done = sim.update()
 
 Simulation.get_log()
 
-#### Parameters:
+##### Parameters:
 
 None
 
-#### Returns:
+##### Returns:
 
 Dictionary
 
-#### Usage:
+##### Usage:
 
 ```python
 log = sim.get_log()
