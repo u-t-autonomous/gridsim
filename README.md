@@ -4,7 +4,9 @@
 
 # Dependencies
 
-Install pygame
+Python 2.7
+
+Pygame
 
 # Documentation
 
@@ -72,7 +74,7 @@ Usage:
 
 # Usage Example
 
-```
+```python
 from environment import Simulation
 
 sim = Simulation("config.txt", "matrix.txt")
