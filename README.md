@@ -14,11 +14,11 @@ Pygame
 
 Simulation(configFile = None, matrixFile = None)
 
-Parameters:
+### Parameters:
 
-Returns:
+### Returns:
 
-Usage:
+### Usage:
 
 sim = Simulation('path/to/config_file','path/to/MDP_file')
 
@@ -26,11 +26,17 @@ sim = Simulation('path/to/config_file','path/to/MDP_file')
 
 Simulation.move_agent(number = None, action = None)
 
-Parameters:
+### Parameters:
 
-Returns:
+number: Integer
 
-Usage:
+action: String
+
+### Returns:
+
+None
+
+### Usage:
 
 sim.move_agent(0,'east')
 
@@ -38,13 +44,15 @@ sim.move_agent(0,'east')
 
 Simulation.get_state()
 
-Parameters:
+### Parameters:
 
 None
 
-Returns:
+### Returns:
 
-Usage:
+Dictionary
+
+### Usage:
 
 state = sim.get_state()
 
@@ -52,25 +60,37 @@ state = sim.get_state()
 
 Simulation.update()
 
-Parameters:
+### Parameters:
 
 None
 
-Returns:
+### Returns:
 
-Usage:
+Boolean
 
+### Usage:
+```python
 done = sim.update()
-
+```
 ## Getting the log
 
-Simulation.log()
+Simulation.get_log()
 
-Parameters:
+### Parameters:
 
-Returns:
+None
 
-Usage:
+### Returns:
+
+Dictionary
+
+### Usage:
+
+```python
+log = sim.get_log()
+agents_log = sim.get_log()["agents"]
+agent_0_log = sim.get_log()["agents"][0]
+```
 
 # Usage Example
 
