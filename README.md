@@ -124,5 +124,5 @@ for line in sim.get_log()["agents"][0]:
 
 # Developers
 
-* @LaufferN
-* @sahabi
+* [@LaufferN](https://github.com/LaufferN)
+* [@sahabi](https://github.com/sahabi)
