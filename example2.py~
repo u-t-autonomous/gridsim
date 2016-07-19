@@ -1,0 +1,38 @@
+from environment import Simulation
+import pygame
+
+
+def main():
+
+    sim = Simulation("config.txt", "matrix.txt")
+
+    done = False
+    while True:
+        sim.move_obstacles()
+        sim.draw()
+
+	if (sim.handle_events()): break
+
+        sim.move_agent(0, sim.get_key())     
+        #sim.move_agents_matrix()
+        sim.draw()
+
+
+
+        agent1 = sim.get_state()["agents"][0]
+        print "agent1: {}".format(agent1)
+
+        obstacle1 = sim.get_state()["moving_obstacles"][0]
+        print "obstacle1: {}".format(obstacle1)
+
+        if (sim.step_forward()): break
+
+    for line in sim.get_log()["agents"][0]:
+        print line
+
+    sim.generate_agent_matrix("matrix_agent.txt")
+        
+
+    
+
+main()

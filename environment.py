@@ -9,7 +9,8 @@ class Simulation:
     grid = []
     agent_blocks = []
     moving_obstacles = []
-    obstacle_percentages = {}
+    obstacle_percentages = []
+    agent_percentages = []
     log = {"agents": [], "moving_obstacles": []} 
     WINDOW_SIZE = [0, 0]
     HEIGHT = 0
@@ -53,8 +54,10 @@ class Simulation:
         self.screen = pygame.display.set_mode(self.WINDOW_SIZE)
 
         for i in self.agent_blocks:
+            self.agent_percentages.append({})
             self.log["agents"].append([])
         for i in self.moving_obstacles:
+            self.obstacle_percentages.append({})
             self.log["moving_obstacles"].append([])
 
         self.import_matrix(matrixFile)
@@ -143,17 +146,49 @@ class Simulation:
     def import_matrix(self, matrixFile):
         matrixFile = file(matrixFile, 'r')
         for line in matrixFile:
+            if len(line) == 0:
+                continue
+
             line = line.split(" ")
-            self.obstacle_percentages[(int(line[0]), int(line[1]))] = (int(line[2]), int(line[3]), int(line[4]), int(line[5]), int(line[6]))
+
+            if len(line[0]) == 1:
+                if line[0] == 'a':
+                    for agent_percentage in self.agent_percentages:
+                        agent_percentage[(int(line[1]), int(line[2]))] = (int(line[3]), int(line[4]), int(line[5]), int(line[6]), int(line[6]))
+                elif line[0] == 'o':
+                    for obstacle_percentage in self.obstacle_percentages:
+                        obstacle_percentage[(int(line[1]), int(line[2]))] = (int(line[3]), int(line[4]), int(line[5]), int(line[6]), int(line[6]))
+                continue
+
+            index = int(line[0][1])
+            if line[0][0] == 'a' and index < len(self.agent_percentages):
+                self.agent_percentages[index][(int(line[1]), int(line[2]))] = (int(line[3]), int(line[4]), int(line[5]), int(line[6]), int(line[7]))
+            elif line[0][0] == 'o' and index < len(self.obstacle_percentages):
+                self.obstacle_percentages[index][(int(line[1]), int(line[2]))] = (int(line[3]), int(line[4]), int(line[5]), int(line[6]), int(line[7]))
 
 
     def move_obstacles(self):
         index = 0
         for obstacle in self.moving_obstacles:
-            obstacle_percentages = self.obstacle_percentages[(obstacle.column, obstacle.row)]
+            obstacle_percentages = self.obstacle_percentages[index][(obstacle.column, obstacle.row)]
             action = self.weighted_choice((("north", obstacle_percentages[0]), ("east", obstacle_percentages[1]), ("south", obstacle_percentages[2]), ("west", obstacle_percentages[3]), ("stay", obstacle_percentages[4])))
             self.move_obstacle(index, action)
             index += 1
+
+    def move_agents_matrix(self):
+        index = 0
+        for agent in self.agent_blocks:
+            agent_percentages = self.agent_percentages[index][(agent.column, agent.row)]
+            action = self.weighted_choice((("north", agent_percentages[0]), ("east", agent_percentages[1]), ("south", agent_percentages[2]), ("west", agent_percentages[3]), ("stay", agent_percentages[4])))
+            self.move_agent(index, action)
+            index += 1
+
+
+    def move_agent_matrix(self, index):
+        agent = self.agent_blocks[index]
+        agent_percentages = self.agent_percentages[index][(agent.column, agent.row)]
+        action = self.weighted_choice((("north", agent_percentages[0]), ("east", agent_percentages[1]), ("south", agent_percentages[2]), ("west", agent_percentages[3]), ("stay", agent_percentages[4])))
+        self.move_agent(index, action)
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -165,10 +200,10 @@ class Simulation:
                 if agent.column == obstacle.column and agent.row == obstacle.row:
                     print "Moving obstacle hit"
                     return True
-            if type(self.grid[agent.column][agent.row]) is Obstacle_block:
+            if isinstance(self.grid[agent.column][agent.row], Obstacle_block):
                 print "Fixed obstacle hit"
                 return True
-            if type(self.grid[agent.column][agent.row]) is Goal_block:
+            if isinstance(self.grid[agent.column][agent.row], Goal_block):
                 print "Goal block hit"
                 return True
 
@@ -177,6 +212,20 @@ class Simulation:
     def get_log(self):
         return self.log
 
+    def get_key(self):
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:
+                        return "north"
+                    elif event.key == pygame.K_RIGHT:
+                        return "east"
+                    elif event.key == pygame.K_DOWN:
+                        return "south"
+                    elif event.key == pygame.K_LEFT:
+                        return "west"
 
     def update(self):
         self.move_obstacles()
@@ -184,6 +233,88 @@ class Simulation:
         self.time_step += 1
         self.clock.tick(2)
         return self.handle_events()
+
+    def step_forward(self):
+        self.time_step += 1
+        self.clock.tick(2)
+        return self.handle_events()
+
+    def generate_agent_matrix(self, matrixFile):
+        log = self.get_log()["agents"]
+        f = file(matrixFile, 'w')
+
+        counter = 0
+        for agent in log:
+            event_count = []
+            for column in range(self.WIDTH):
+                event_count.append([])
+                for row in range(self.HEIGHT):
+                    event_count[column].append([0, 0, 0, 0, 0]) #north, east, south, west, stay
+            
+            for event in agent:
+                if event[2] == "north":
+                    index = 0
+                elif event[2] == "east":
+                    index = 1
+                elif event[2] == "south":
+                    index = 2
+                elif event[2] == "west":
+                    index = 3
+                else:
+                    index = 4
+                
+                event_count[event[1][0]][event[1][1]][index] += 1
+
+            for x in range(len(event_count)):
+                for y in range(len(event_count[x])):
+                    prob_temp = event_count[x][y]
+                    
+                    total_count = sum(prob_temp)
+                    if total_count == 0:
+                        f.write ("a{} {} {} 25 25 25 25 0\n".format(counter, x, y))
+                    else:
+                        f.write("a{} {} {} {} {} {} {} {}\n".format(counter, x, y, 100*prob_temp[0]/total_count, 100*prob_temp[1]/total_count, 100*prob_temp[2]/total_count, 100*prob_temp[3]/total_count, 100*prob_temp[4]/total_count))
+            f.write("\n")
+            counter += 1
+
+
+    
+
+    def move(self, movement):
+        self.move_obstacles()
+        self.draw()
+
+	if (self.handle_events()): 
+            return True, 0
+
+        if movement == "matrix":
+            #move according to matrix
+            self.move_agents_matrix()
+        elif movement == "keyboard":
+            #keyboard input
+            for agent in range(len(self.agent_blocks)):
+                self.move_agent(agent, self.get_key())
+
+        else:
+            #move according to list input
+            for agent in range(len(movement)):
+                if movement[agent] == "keyboard":
+                    self.move_agent(agent, self.get_key())
+                elif movement[agent] == "matrix":
+                    self.move_agent_matrix(agent)
+                else:
+                    self.move_agent(agent, movement[agent])
+
+        self.draw()
+
+        if (self.step_forward()):
+            return True, 0
+
+        return False, self.get_state()
+
+
+                    
+        
 
 
 class Block():
