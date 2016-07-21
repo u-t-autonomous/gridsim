@@ -29,21 +29,22 @@ sim = Simulation('path/to/config_file','path/to/MDP_file')
 ```
 ### Moving Agents
 
-Simulation.move_agent(number = None, action = None)
+Simulation.move_agent(actions = None)
 
 ##### Parameters:
 
-number: Integer
+actions: List of actions. There are 7 actions to choose from. 'east', 'west', 'north', 'south', 'keyboard', 'matrix'.
 
-action: String
+The fist four actions are self-explanatory. 'keyboard' takes the input from they keyboard keys to move the agent. 'matrix' moves the agent according to the matrix file used during instantiating the simulation.
 
 ##### Returns:
 
-None
+Boolean: flag whether to terminate simulation. True if terminate, False if not.
+Dictionary: Contains the state of the simulation.
 
 ##### Usage:
 ```python
-sim.move_agent(0,'east')
+sim.move_agent(['east','keyboard'])
 ```
 ### Getting Current State
 

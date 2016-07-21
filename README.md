@@ -98,6 +98,24 @@ agents_log = sim.get_log()["agents"]
 agent_0_log = sim.get_log()["agents"][0]
 ```
 
+### Generating agent matrix
+
+Simulation.generate_agent_matrix(file = None)
+
+##### Parameters:
+
+String: String
+
+##### Returns:
+
+None
+
+##### Usage:
+
+```python
+sim.generate_agent_matrix("agent_matrix.txt")
+```
+
 ## Usage Example
 
 ```python
