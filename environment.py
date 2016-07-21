@@ -226,6 +226,8 @@ class Simulation:
                         return "south"
                     elif event.key == pygame.K_LEFT:
                         return "west"
+                    elif event.key == pygame.K_SPACE:
+                        return "stay"
 
     def update(self):
         self.move_obstacles()

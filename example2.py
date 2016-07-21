@@ -11,7 +11,7 @@ def main():
     done = False
     while not done:
 
-        done, state = sim.move(["matrix", "stay"])
+        done, state = sim.move(["matrix", "keyboard"])
         
     #sim.generate_agent_matrix("agent_matrix.txt")
 
