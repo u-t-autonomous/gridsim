@@ -45,7 +45,7 @@ Dictionary: Contains the state of the simulation.
 
 ##### Usage:
 ```python
-done, state = sim.move_agent(['east','keyboard'])
+sim.move_agent(['east','keyboard'])
 ```
 ### Getting Current State
 
