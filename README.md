@@ -40,11 +40,12 @@ The fist four actions are self-explanatory. 'keyboard' takes the input from they
 ##### Returns:
 
 Boolean: flag whether to terminate simulation. True if terminate, False if not.
+
 Dictionary: Contains the state of the simulation.
 
 ##### Usage:
 ```python
-sim.move_agent(['east','keyboard'])
+done, state = sim.move_agent(['east','keyboard'])
 ```
 ### Getting Current State
 
