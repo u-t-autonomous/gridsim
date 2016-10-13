@@ -1,6 +1,8 @@
 import pygame
 import random
 import bisect
+import speech_recognition
+
 
 
 class Simulation:
@@ -11,6 +13,8 @@ class Simulation:
     moving_obstacles = []
     obstacle_percentages = []
     agent_percentages = []
+    # slip_percentages[current_x][current_y][action](x_result, y_result, prob)
+    slip_percentages = []
     log = {"agents": [], "moving_obstacles": []} 
     WINDOW_SIZE = [0, 0]
     HEIGHT = 0
@@ -20,8 +24,13 @@ class Simulation:
     screen = pygame.display.set_mode((0,0))
     clock = pygame.time.Clock()
     pygame.display.set_caption("Environment")
+    recognizer = speech_recognition.Recognizer()
+    matrix_active = False
+    slip_active = False
     
-    def __init__(self, configFile, matrixFile):
+    def __init__(self, configFile):
+
+        #import config file
         configFile = open(configFile, 'r')
 
         for line in configFile:
@@ -60,25 +69,56 @@ class Simulation:
             self.obstacle_percentages.append({})
             self.log["moving_obstacles"].append([])
 
-        self.import_matrix(matrixFile)
+
+        #setup slip percentages
+        for i in range(self.WIDTH):
+            self.slip_percentages.append([])
+            for k in range(self.HEIGHT):
+                self.slip_percentages[i].append([])
+                self.slip_percentages[i][k] = {'north': [], 'east': [], 'south': [], 'west': []}
+
+
+        #self.import_matrix_file(matrixFile)
 
         pygame.init()
 
+        self.recognizer.pause_threshold = 0.5
+
     def clear(self):
         self.screen.fill([0,0,0])
+
+    def out_of_bounds(self, x_pos, y_pos):
+        #return true if the position is outside of the playfield
+        return not (x_pos >= 0 and x_pos < self.WIDTH and y_pos >= 0 and y_pos < self.HEIGHT)
 
     def move_agent(self, number, action):
         x_pos = self.agent_blocks[number].column
         y_pos = self.agent_blocks[number].row
         self.log["agents"][number].append((self.time_step, (x_pos, y_pos), action))
-        if action == "north" and y_pos > 0:
-            self.agent_blocks[number].move_north()
-        elif action == "south" and y_pos < self.HEIGHT - 1:
-            self.agent_blocks[number].move_south()
-        elif action == "west" and x_pos > 0:
-            self.agent_blocks[number].move_west()
-        elif action == "east" and x_pos < self.WIDTH - 1:
-            self.agent_blocks[number].move_east() 
+        if self.slip_active:
+            #then slip
+            #only execute of the action would keep the block within the grid
+            if action == "north" and y_pos > 0 or action == "south" and y_pos < self.HEIGHT - 1 or action == "west" and x_pos > 0 or action == "east" and x_pos < self.WIDTH - 1:
+
+                percents = []
+                percents_temp = self.slip_percentages[x_pos][y_pos][action] #list of tuples in form of ((x_result, y_result), probability of landing there)
+
+                for percent in percents_temp:
+                    if not self.out_of_bounds(percent[0][0], percent[0][1]):
+                        percents.append(percent)
+
+                result = self.weighted_choice(percents)
+                self.agent_blocks[number].move_to(result[0], result[1])
+
+        else:
+            if action == "north" and y_pos > 0:
+                self.agent_blocks[number].move_north()
+            elif action == "south" and y_pos < self.HEIGHT - 1:
+                self.agent_blocks[number].move_south()
+            elif action == "west" and x_pos > 0:
+                self.agent_blocks[number].move_west()
+            elif action == "east" and x_pos < self.WIDTH - 1:
+                self.agent_blocks[number].move_east() 
 
     def draw(self):
 
@@ -143,7 +183,7 @@ class Simulation:
         elif action == "east" and x_pos < self.WIDTH - 1:
             self.moving_obstacles[number].move_east()
 
-    def import_matrix(self, matrixFile):
+    def load_matrix_file(self, matrixFile):
         matrixFile = file(matrixFile, 'r')
         for line in matrixFile:
             if len(line) == 0:
@@ -166,6 +206,19 @@ class Simulation:
             elif line[0][0] == 'o' and index < len(self.obstacle_percentages):
                 self.obstacle_percentages[index][(int(line[1]), int(line[2]))] = (int(line[3]), int(line[4]), int(line[5]), int(line[6]), int(line[7]))
 
+        self.matrix_active = True
+        matrixFile.close()
+
+    def load_slip_file(self, slipFile):
+        slipFile = file(slipFile, "r")
+        for line in slipFile:
+            line = line.split(" ")
+            # current_x current_y action (x_result, y_result, prob)
+            #self.slip_percentages[1][2]['north'].append(1, 1, .5)
+            self.slip_percentages[int(line[0])][int(line[1])][line[2]].append(((int(line[3]), int(line[4])), float(line[5])))
+
+        self.slip_active = True
+        slipFile.close()
 
     def move_obstacles(self):
         index = 0
@@ -199,18 +252,66 @@ class Simulation:
             for obstacle in self.moving_obstacles:
                 if agent.column == obstacle.column and agent.row == obstacle.row:
                     print "Moving obstacle hit"
-                    return True
+                    #return True
             if isinstance(self.grid[agent.column][agent.row], Obstacle_block):
                 print "Fixed obstacle hit"
-                return True
+                #return True
             if isinstance(self.grid[agent.column][agent.row], Goal_block):
                 print "Goal block hit"
-                return True
+                #return True
 
         return False
                          
     def get_log(self):
         return self.log
+
+    def get_history(self, steps_back):
+        if steps_back > self.time_step:
+            steps_back = self.time_step
+
+        out_log = {"agents": [], "moving_obstacles": []} 
+        #self.log["agents"][number].append((self.time_step, (x_pos, y_pos), action))
+        for number in range(len(self.log["agents"])):
+            out_log["agents"].append(self.log["agents"][number][-steps_back:])
+
+        for number in range(len(self.log["moving_obstacles"])):
+            out_log["move_obstacles"][number].append(elf.log["moving_obstacles"][number][-steps_back:])
+
+        return out_log
+
+
+    def get_voice(self):
+        print "Listening..."
+        with speech_recognition.Microphone() as source:
+            self.recognizer.non_speaking_duration = 0.3
+            self.recognizer.pause_threshold = 0.3
+            self.recognizer.adjust_for_ambient_noise(source)
+            audio = self.recognizer.listen(source)
+
+	try:
+            word = self.recognizer.recognize_sphinx(audio)
+
+	except speech_recognition.UnknownValueError:
+            print("Could not understand audio")
+
+	except speech_recognition.RequestError as e:
+            print("Recog Error; {0}".format(e))
+
+        print "I heard you say: " + word
+        print "Moving..."
+        if len(word) == 0:
+            return "stay"
+        if word[0] < 'f':
+            return "east"
+        elif word[0] < 'l':
+            return "stay"
+        elif word[0] < 'q':   # Uniform distribution across alphabet
+            return "north"    # to generate noise
+        elif word[0] < 'v':
+            return "south"
+        else: 
+            return "west"
+            
 
     def get_key(self):
         while True:
@@ -233,12 +334,12 @@ class Simulation:
         self.move_obstacles()
         self.draw()
         self.time_step += 1
-        self.clock.tick(2)
+        #self.clock.tick(2)
         return self.handle_events()
 
     def step_forward(self):
         self.time_step += 1
-        self.clock.tick(2)
+        #self.clock.tick(2)
         return self.handle_events()
 
     def generate_agent_matrix(self, matrixFile):
@@ -296,6 +397,9 @@ class Simulation:
             #keyboard input
             for agent in range(len(self.agent_blocks)):
                 self.move_agent(agent, self.get_key())
+        elif movement == "voic":
+            for agent in range(len(self.agent_blocks)):
+                self.move_agent(agent, self.get_voice())
 
         else:
             #move according to list input
@@ -304,6 +408,8 @@ class Simulation:
                     self.move_agent(agent, self.get_key())
                 elif movement[agent] == "matrix":
                     self.move_agent_matrix(agent)
+                elif movement[agent] == "voice":
+                    self.move_agent(agent, self.get_voice())
                 else:
                     self.move_agent(agent, movement[agent])
 
@@ -339,6 +445,7 @@ class Moving_obstacle_block(Obstacle_block):
         self.column = column
         self.row = row
 
+
     def move_north(self):
         self.row += -1
     def move_south(self):
@@ -362,6 +469,9 @@ class Agent_block(Block):
         self.column = column
         self.row = row
 
+    def move_to(self, column, row):
+        self.column = column 
+        self.row = row
     def move_north(self):
         self.row += -1
     def move_south(self):
