@@ -1,3 +1,15 @@
+# GUI
+
+##### Launching GUI
+
+```bash
+python config_gui.py [configFile]
+```
+##### Parameters:
+
+configFile (optional) - open a config file to edit
+
+
 # gridsim
 
 2D gridworld simulation, grid world, grid-world, pygame, sim, girdworld, simulation, 2D.
@@ -8,17 +20,6 @@
 * Pygame
 
 ## Documentation
-
-### GUI
-
-##### Launching GUI
-
-```bash
-python config_gui.py
-```
-##### Parameters:
-
-configFile (optional) - open a config file to edit
 
 ### Instantiating
 
@@ -39,7 +40,9 @@ sim = Simulation('path/to/config_file')
 
 ### Uploading matrix file
 
+```python
 Simulation.load_matrix_file('path/to/matrix_file')
+```
 
 ##### Parameters:
 
@@ -51,7 +54,9 @@ Nothing
 
 ### Uploading slip file
 
+```python
 Simulation.load_slip_file('path/to/slip_file')
+```
 
 ##### Parameters:
 
@@ -61,14 +66,16 @@ slipFile: String
 
 Nothing
 
-##### Slip file structure
+##### Slip file structure:
 ```python
 x_pos y_pos action x_result y_result probability
 ```
 
 ### Moving Agents
 
+```python
 Simulation.move_agent(actions = None)
+```
 
 ##### Parameters:
 
@@ -88,7 +95,9 @@ done, state = sim.move_agent(['east','keyboard'])
 ```
 ### Getting Current State
 
+```python
 Simulation.get_state()
+```
 
 ##### Parameters:
 
@@ -104,7 +113,9 @@ state = sim.get_state()
 ```
 ### Update simulation
 
+```python
 Simulation.update()
+```
 
 ##### Parameters:
 
@@ -115,6 +126,7 @@ None
 Boolean
 
 ##### Usage:
+
 ```python
 done = sim.update()
 ```
@@ -140,7 +152,9 @@ agent_0_log = sim.get_log()["agents"][0]
 
 ### Getting history
 
+```python
 Simulation.get_history(time_steps)
+```
 
 ##### Parameters:
 
@@ -160,7 +174,9 @@ agents_2_history = sim.get_log(2)["agents"]
 
 ### Generating agent matrix
 
+```python
 Simulation.generate_agent_matrix(file = None)
+```
 
 ##### Parameters:
 
