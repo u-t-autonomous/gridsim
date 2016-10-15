@@ -26,7 +26,9 @@ configFile (optional) - open a config file to edit
 
 ### Instantiating
 
+```python
 Simulation(configFile = None)
+```
 
 ##### Parameters:
 
