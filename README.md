@@ -9,15 +9,24 @@
 
 ## Documentation
 
+### GUI
+
+##### Launching GUI
+
+```bash
+python config_gui.py
+```
+##### Parameters:
+
+configFile (optional) - open a config file to edit
+
 ### Instantiating
 
-Simulation(configFile = None, matrixFile = None)
+Simulation(configFile = None)
 
 ##### Parameters:
 
 configFile: String
-
-matrixFile: String
 
 ##### Returns:
 
@@ -25,8 +34,38 @@ An instance of Simulation()
 
 ##### Usage:
 ```python
-sim = Simulation('path/to/config_file','path/to/MDP_file')
+sim = Simulation('path/to/config_file')
 ```
+
+### Uploading matrix file
+
+Simulation.load_matrix_file('path/to/matrix_file')
+
+##### Parameters:
+
+matrixFile: String
+
+##### Returns:
+
+Nothing
+
+### Uploading slip file
+
+Simulation.load_slip_file('path/to/slip_file')
+
+##### Parameters:
+
+slipFile: String
+
+##### Returns:
+
+Nothing
+
+##### Slip file structure
+```python
+x_pos y_pos action x_result y_result probability
+```
+
 ### Moving Agents
 
 Simulation.move_agent(actions = None)
@@ -97,6 +136,26 @@ Dictionary
 log = sim.get_log()
 agents_log = sim.get_log()["agents"]
 agent_0_log = sim.get_log()["agents"][0]
+```
+
+### Getting history
+
+Simulation.get_history(time_steps)
+
+##### Parameters:
+
+time_steps
+
+##### Returns
+
+Dictionary of last [time_steps] time steps
+
+#####Usuage:
+
+```python
+histroy_1 = sim.get_log(1)
+history_2 = sim.get_log(2)
+agents_2_history = sim.get_log(2)["agents"]
 ```
 
 ### Generating agent matrix
