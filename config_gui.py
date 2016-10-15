@@ -63,7 +63,6 @@ def main():
 			elif event.type == pygame.MOUSEBUTTONUP:
 				mouse_clicked = False
 
-				"""
 			elif event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_RETURN:
 					generate_config_file()
@@ -77,7 +76,6 @@ def main():
 					block_type = Moving_obstacle_block(0, 0)
 				elif event.key == pygame.K_5:
 					block_type = Goal_block()
-					"""
 
 
 		if mouse_clicked:
@@ -89,7 +87,7 @@ def main():
 				pass
 
 
-		#draw()
+		draw()
 
 
 
@@ -106,8 +104,8 @@ def draw():
 def generate_config_file():
 	global grid, WIDTH, HEIGHT
 
-	print("Config file generated")
-	f = open("config.txt", 'w')
+	configFile = raw_input("Enter file name: ")
+	f = open(configFile, 'w+')
 	f.write("HEIGHT: " + str(HEIGHT) + "\n")
 	f.write("WIDTH: " + str(WIDTH) + "\n")
 
@@ -124,6 +122,7 @@ def generate_config_file():
 				f.write("BLOCK: goal " + str(x) + " " + str(y) + "\n")
 
 	f.close()
+	print("Config file generated")
 
 def load_config_file(configFile):
 	global WIDTH, HEIGHT, grid, screen, WINDOW_SIZE

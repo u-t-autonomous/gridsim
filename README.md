@@ -5,6 +5,9 @@
 ```bash
 python config_gui.py [configFile]
 ```
+
+The GUI prompts for inputs on the command line while running
+
 ##### Parameters:
 
 configFile (optional) - open a config file to edit
