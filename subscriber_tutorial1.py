@@ -5,6 +5,7 @@ import pygame
 # You will need to create a callback function
 # You will need to move sim.move(command) inside the callback
 # command can only be one of the following "south", "north", "west", "east".
+# Remember to initiate a ROS node and subscribe to the topic /cmd
 
 def main():
 
