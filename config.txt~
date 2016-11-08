@@ -1,6 +1,0 @@
-HEIGHT: 10
-WIDTH: 10
-BLOCK: agent 1 1
-BLOCK: fixed_obstacle 1 8
-BLOCK: agent 8 1
-BLOCK: fixed_obstacle 8 8
