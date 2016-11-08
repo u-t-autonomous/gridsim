@@ -1,7 +1,7 @@
 import pygame
 import random
 import bisect
-import speech_recognition
+# import speech_recognition
 
 
 
@@ -24,7 +24,7 @@ class Simulation:
     screen = pygame.display.set_mode((0,0))
     clock = pygame.time.Clock()
     pygame.display.set_caption("Environment")
-    recognizer = speech_recognition.Recognizer()
+    # recognizer = speech_recognition.Recognizer()
     matrix_active = False
     slip_active = False
     
@@ -82,7 +82,7 @@ class Simulation:
 
         pygame.init()
 
-        self.recognizer.pause_threshold = 0.5
+        # self.recognizer.pause_threshold = 0.5
 
     def clear(self):
         self.screen.fill([0,0,0])
@@ -213,6 +213,8 @@ class Simulation:
         slipFile = file(slipFile, "r")
         for line in slipFile:
             line = line.split(" ")
+            print line
+            print line[5]
             # current_x current_y action (x_result, y_result, prob)
             #self.slip_percentages[1][2]['north'].append(1, 1, .5)
             self.slip_percentages[int(line[0])][int(line[1])][line[2]].append(((int(line[3]), int(line[4])), float(line[5])))
@@ -280,37 +282,37 @@ class Simulation:
         return out_log
 
 
-    def get_voice(self):
-        print "Listening..."
-        with speech_recognition.Microphone() as source:
-            self.recognizer.non_speaking_duration = 0.3
-            self.recognizer.pause_threshold = 0.3
-            self.recognizer.adjust_for_ambient_noise(source)
-            audio = self.recognizer.listen(source)
+ #    def get_voice(self):
+ #        print "Listening..."
+ #        with speech_recognition.Microphone() as source:
+ #            self.recognizer.non_speaking_duration = 0.3
+ #            self.recognizer.pause_threshold = 0.3
+ #            self.recognizer.adjust_for_ambient_noise(source)
+ #            audio = self.recognizer.listen(source)
 
-	try:
-            word = self.recognizer.recognize_sphinx(audio)
+	# try:
+ #            word = self.recognizer.recognize_sphinx(audio)
 
-	except speech_recognition.UnknownValueError:
-            print("Could not understand audio")
+	# except speech_recognition.UnknownValueError:
+ #            print("Could not understand audio")
 
-	except speech_recognition.RequestError as e:
-            print("Recog Error; {0}".format(e))
+	# except speech_recognition.RequestError as e:
+ #            print("Recog Error; {0}".format(e))
 
-        print "I heard you say: " + word
-        print "Moving..."
-        if len(word) == 0:
-            return "stay"
-        if word[0] < 'f':
-            return "east"
-        elif word[0] < 'l':
-            return "stay"
-        elif word[0] < 'q':   # Uniform distribution across alphabet
-            return "north"    # to generate noise
-        elif word[0] < 'v':
-            return "south"
-        else: 
-            return "west"
+ #        print "I heard you say: " + word
+ #        print "Moving..."
+ #        if len(word) == 0:
+ #            return "stay"
+ #        if word[0] < 'f':
+ #            return "east"
+ #        elif word[0] < 'l':
+ #            return "stay"
+ #        elif word[0] < 'q':   # Uniform distribution across alphabet
+ #            return "north"    # to generate noise
+ #        elif word[0] < 'v':
+ #            return "south"
+ #        else: 
+ #            return "west"
             
 
     def get_key(self):
@@ -400,6 +402,9 @@ class Simulation:
         elif movement == "voic":
             for agent in range(len(self.agent_blocks)):
                 self.move_agent(agent, self.get_voice())
+        elif movement in ['east','west','south','north']:
+            for agent in range(len(self.agent_blocks)):
+                self.move_agent(agent, movement)
 
         else:
             #move according to list input
