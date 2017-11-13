@@ -19,7 +19,7 @@ configFile (optional) - open a config file to edit
 
 ## Dependencies
 
-* Python 2.7
+* Python 2.7 or 3+
 * Pygame
 
 ## Documentation
