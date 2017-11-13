@@ -6,20 +6,18 @@ def main():
 
     sim = Simulation("config.txt")
 
-    #sim.load_matrix_file("matrix.txt") --only include if a matrix file is used
+    #sim.load_matrix_file("matrix.txt") #only include if a matrix file is used
 
-    sim.load_slip_file("slip.txt") #turns slipping to 'on'
+    sim.load_slip_file("slip.txt") #turns slipping 'on', comment out for none
 
     state = sim.get_state() #grab state
 
-    done = False	
+    done = False
     while not done:
 
-        done, state = sim.move(["keyboard"]) #main call
+        done, state = sim.move(["keyboard"]) #move using keyb, matrix, or str
 
         print(sim.get_history(2)["agents"]) #get the history from 2 time steps back
-        
-    #sim.generate_agent_matrix("agent_matrix.txt")
-
+        print(sim.get_state())
 
 main()

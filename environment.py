@@ -210,11 +210,11 @@ class Simulation:
         matrixFile.close()
 
     def load_slip_file(self, slipFile):
-        slipFile = file(slipFile, "r")
+        slipFile = open(slipFile, "r")
         for line in slipFile:
             line = line.split(" ")
-            print line
-            print line[5]
+            print (line)
+            print (line[5])
             # current_x current_y action (x_result, y_result, prob)
             #self.slip_percentages[1][2]['north'].append(1, 1, .5)
             self.slip_percentages[int(line[0])][int(line[1])][line[2]].append(((int(line[3]), int(line[4])), float(line[5])))
@@ -253,13 +253,13 @@ class Simulation:
         for agent in self.agent_blocks:
             for obstacle in self.moving_obstacles:
                 if agent.column == obstacle.column and agent.row == obstacle.row:
-                    print "Moving obstacle hit"
+                    print ("Moving obstacle hit")
                     #return True
             if isinstance(self.grid[agent.column][agent.row], Obstacle_block):
-                print "Fixed obstacle hit"
+                print ("Fixed obstacle hit")
                 #return True
             if isinstance(self.grid[agent.column][agent.row], Goal_block):
-                print "Goal block hit"
+                print ("Goal block hit")
                 #return True
 
         return False
@@ -373,7 +373,6 @@ class Simulation:
             for x in range(len(event_count)):
                 for y in range(len(event_count[x])):
                     prob_temp = event_count[x][y]
-                    
                     total_count = sum(prob_temp)
                     if total_count == 0:
                         f.write ("a{} {} {} 25 25 25 25 0\n".format(counter, x, y))
@@ -382,15 +381,12 @@ class Simulation:
             f.write("\n")
             counter += 1
 
-
-    
-
     def move(self, movement):
         self.move_obstacles()
         self.draw()
 
-	if (self.handle_events()): 
-            return True, 0
+        if (self.handle_events()):
+            return (True, 0)
 
         if movement == "matrix":
             #move according to matrix
