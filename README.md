@@ -209,8 +209,9 @@ state = sim.get_state()
 done = False
 
 while not done:
-
-    done, state = sim.move(["matrix", "stay"])
+    
+    # move the agent 1 according to the matrix file and agent 2 south
+    done, state = sim.move(["matrix", "south"])
     sleep(1)
 
 # to generate a matrix file

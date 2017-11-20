@@ -10,6 +10,6 @@ state = sim.get_state()
 done = False
 while not done:
 
-    done, state = sim.move(["matrix", "matrix"])
+    done, state = sim.move(["matrix", "south"])
     sleep(1)
 #sim.generate_agent_matrix("agent_matrix.txt")
