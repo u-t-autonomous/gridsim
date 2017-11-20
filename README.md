@@ -202,7 +202,9 @@ sim.generate_agent_matrix("agent_matrix.txt")
 ```python
 from environment import Simulation
 
-sim = Simulation("config.txt", "matrix.txt")
+sim = Simulation("config.txt")
+
+sim.load_matrix_file("matrix.txt")
 
 state = sim.get_state()
 
