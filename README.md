@@ -1,16 +1,3 @@
-# GUI
-
-##### Launching GUI
-
-```bash
-python config_gui.py [configFile]
-```
-
-The GUI prompts for inputs on the command line while running
-
-##### Parameters:
-
-configFile (optional) - open a config file to edit
 
 
 # gridsim
@@ -218,6 +205,19 @@ while not done:
 sim.generate_agent_matrix("agent_matrix.txt")
 
 ```
+# Config file maker GUI
+
+##### Launching GUI
+
+```bash
+python config_gui.py [configFile]
+```
+
+The GUI prompts for inputs on the command line while running
+
+##### Parameters:
+
+configFile (optional) - open a config file to edit
 
 ## Developers
 
