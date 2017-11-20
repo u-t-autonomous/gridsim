@@ -201,18 +201,19 @@ sim.generate_agent_matrix("agent_matrix.txt")
 
 ```python
 from environment import Simulation
+from time import sleep
 
 sim = Simulation("config.txt")
-
 sim.load_matrix_file("matrix.txt")
-
 state = sim.get_state()
-
 done = False
+
 while not done:
 
     done, state = sim.move(["matrix", "stay"])
-        
+    sleep(1)
+
+# to generate a matrix file
 sim.generate_agent_matrix("agent_matrix.txt")
 
 ```

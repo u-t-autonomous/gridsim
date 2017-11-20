@@ -2,7 +2,9 @@ from environment import Simulation
 from time import sleep
 
 sim = Simulation("config.txt")
+
 sim.load_matrix_file("matrix.txt")
+
 state = sim.get_state()
 
 done = False
