@@ -169,7 +169,7 @@ time_steps
 
 Dictionary of last [time_steps] time steps
 
-#####Usuage:
+##### Usage:
 
 ```python
 histroy_1 = sim.get_log(1)
